@@ -181,7 +181,11 @@ class MatchDetailView(QWidget):
         try:
             minimap_path = self._dragon.get_minimap_path()
             img = mpimg.imread(str(minimap_path))
-            ax.imshow(img, extent=[0, MAP_WIDTH, 0, MAP_HEIGHT], aspect='auto', zorder=0)
+            # Image origin is top-left; LoL coords have (0,0) at bottom-left,
+            # so set extent with y going 0 (bottom) -> MAP_HEIGHT (top) and
+            # use origin='upper' so the image rows map correctly.
+            ax.imshow(img, extent=[0, MAP_WIDTH, MAP_HEIGHT, 0],
+                      aspect='auto', zorder=0)
         except Exception:
             ax.set_facecolor('#1a3a1a')
 
@@ -197,7 +201,7 @@ class MatchDetailView(QWidget):
         plot_points(positions['assists'], '#ffcc00', '^', 'Assist')
 
         ax.set_xlim(0, MAP_WIDTH)
-        ax.set_ylim(0, MAP_HEIGHT)
+        ax.set_ylim(MAP_HEIGHT, 0)  # flipped to match image origin at top-left
         ax.set_xticks([])
         ax.set_yticks([])
         ax.set_title('Positioning Heatmap')

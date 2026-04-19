@@ -66,11 +66,13 @@ class DataDragon:
         return self._champions
 
     def get_minimap_path(self) -> Path:
-        """Downloads and caches the Summoner's Rift minimap image."""
+        """Downloads and caches the Summoner's Rift map image."""
         minimap_file = CACHE_DIR / 'minimap.png'
         if not minimap_file.exists():
             resp = requests.get(
-                f'{DDRAGON_BASE}/cdn/img/map/mini/map11.png', timeout=15
+                'https://raw.communitydragon.org/latest/plugins/'
+                'rcp-fe-lol-match-history/global/default/map11.png',
+                timeout=15
             )
             resp.raise_for_status()
             minimap_file.write_bytes(resp.content)
