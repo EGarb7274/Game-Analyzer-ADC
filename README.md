@@ -37,3 +37,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:48 UTC - Task 7: Timeline Analysis
 **What:** Created `src/analysis/timeline.py` with `get_participant_id` (maps PUUID to 1-based participantId), `extract_item_timings` (returns item purchases with timestamps in minutes), and `extract_position_events` (returns kill/death/assist map coordinates from CHAMPION_KILL events). All 7 tests pass.
 **Why:** The match detail view needs item purchase timelines for the timing chart and kill/death/assist positions for the heatmap — both derived from the raw timeline JSON the Riot API provides.
+
+### 2026-04-19 09:51 UTC - Task 8: Builds Loader
+**What:** Created `src/analysis/builds.py` with `load_builds`, `get_champion_build`, and `list_champions` reading from the bundled `data/builds.json`. All 4 builds tests pass. Full suite now at 34/34 tests passing across all modules.
+**Why:** The Builds & Runes panel needs to load per-champion recommendations from the bundled JSON; this module provides that interface with a patchable `BUILDS_FILE` path for clean testing.
