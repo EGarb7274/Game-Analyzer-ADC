@@ -33,3 +33,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:45 UTC - Task 6: Stats Analysis
 **What:** Created `src/analysis/stats.py` with `get_participant`, `calc_kda`, `calc_cs_per_min`, `calc_damage_share`, `calc_kill_participation`, and `extract_match_stats`. All 7 tests pass including kill participation returning values over 100% (correct LoL behaviour when kills+assists exceed team kills).
 **Why:** The dashboard and match detail views need derived per-game statistics (KDA, CS/min, damage share, kill participation) computed from raw Riot API match JSON.
+
+### 2026-04-19 09:48 UTC - Task 7: Timeline Analysis
+**What:** Created `src/analysis/timeline.py` with `get_participant_id` (maps PUUID to 1-based participantId), `extract_item_timings` (returns item purchases with timestamps in minutes), and `extract_position_events` (returns kill/death/assist map coordinates from CHAMPION_KILL events). All 7 tests pass.
+**Why:** The match detail view needs item purchase timelines for the timing chart and kill/death/assist positions for the heatmap — both derived from the raw timeline JSON the Riot API provides.
