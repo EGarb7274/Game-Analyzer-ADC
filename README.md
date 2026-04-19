@@ -41,3 +41,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:51 UTC - Task 8: Builds Loader
 **What:** Created `src/analysis/builds.py` with `load_builds`, `get_champion_build`, and `list_champions` reading from the bundled `data/builds.json`. All 4 builds tests pass. Full suite now at 34/34 tests passing across all modules.
 **Why:** The Builds & Runes panel needs to load per-champion recommendations from the bundled JSON; this module provides that interface with a patchable `BUILDS_FILE` path for clean testing.
+
+### 2026-04-19 09:54 UTC - Task 9: Main Window and Sidebar
+**What:** Created `src/ui/app.py` with `MainWindow` — a `QMainWindow` containing a 180px `QListWidget` sidebar (Dashboard, Match History, Builds & Runes), a `QStackedWidget` for view switching, and a `QStatusBar`. Wired `match_selected` signal from `MatchHistoryView` to open the match detail view. Created stub implementations for all four views so imports resolve cleanly.
+**Why:** Establishes the top-level shell of the application that all subsequent views plug into; stubs allow the import chain to be verified before each view is fully implemented.
