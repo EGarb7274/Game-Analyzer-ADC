@@ -45,3 +45,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:54 UTC - Task 9: Main Window and Sidebar
 **What:** Created `src/ui/app.py` with `MainWindow` — a `QMainWindow` containing a 180px `QListWidget` sidebar (Dashboard, Match History, Builds & Runes), a `QStackedWidget` for view switching, and a `QStatusBar`. Wired `match_selected` signal from `MatchHistoryView` to open the match detail view. Created stub implementations for all four views so imports resolve cleanly.
 **Why:** Establishes the top-level shell of the application that all subsequent views plug into; stubs allow the import chain to be verified before each view is fully implemented.
+
+### 2026-04-19 09:57 UTC - Task 10: Settings Dialog
+**What:** Created `src/ui/settings_dialog.py` with a `QDialog` containing a password-masked API key input, a region combo box (6 regions with matched platform/match-region pairs), a match count spinbox (5–100), and OK/Cancel buttons that persist settings via `config.save_config`. Import verified clean.
+**Why:** Users need a way to enter their Riot API key and select their region before the app can fetch any data; this dialog is launched from the Dashboard's Settings button and from `MainWindow.show_settings`.
