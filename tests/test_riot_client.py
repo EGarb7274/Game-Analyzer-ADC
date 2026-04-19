@@ -55,7 +55,7 @@ def test_get_match_ids_retries_on_rate_limit(client, mock_watcher):
     resp = MagicMock()
     resp.status_code = 429
     resp.headers = {'Retry-After': '0'}
-    error = ApiError(resp)
+    error = ApiError(response=resp)
     mock_watcher.match.matchlist_by_puuid.side_effect = [error, ['NA1_1']]
     result = client.get_match_ids('abc123', count=20)
     assert result == ['NA1_1']
