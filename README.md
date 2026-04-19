@@ -25,3 +25,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:39 UTC - Task 4: Riot API Client
 **What:** Created `src/api/riot_client.py` with `RiotClient` wrapping riotwatcher — `get_puuid`, `get_match_ids`, `get_match`, `get_timeline`, all backed by `_call_with_retry` for 429 rate-limit handling. Created `tests/test_riot_client.py` with 5 passing tests covering each method and retry logic. Fixed a test bug: `riotwatcher.ApiError` is `requests.HTTPError` and requires `response=` as a keyword arg, not positional.
 **Why:** All match data fetching flows through the Riot API; the retry wrapper ensures the app handles rate limits gracefully without crashing.
+
+### 2026-04-19 09:42 UTC - Task 5: Data Dragon Loader
+**What:** Created `src/api/data_dragon.py` with a `DataDragon` class that lazily fetches and locally caches item data, champion data, and the minimap image from Riot's Data Dragon CDN. Created `data/builds.json` with bundled build/rune/skill-order recommendations for 5 ADC champions (Jinx, Jhin, Caitlyn, Ezreal, Kai'Sa). Import verified clean.
+**Why:** The UI needs item names, champion names, and a minimap background without making live API calls on every render; Data Dragon provides this static game data with a local cache to avoid repeated network requests.
