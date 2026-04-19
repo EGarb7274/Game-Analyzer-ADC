@@ -14,7 +14,22 @@
       "Bash(cat)",
       "Bash(cp /tmp/README_current.md /tmp/README_updated.md)",
       "Skill(update-config)",
-      "Bash(bash -c \"git add -A && git commit -m 'task: auto-push' 2>/dev/null; git push origin main 2>/dev/null || true\")"
+      "Bash(bash -c \"git add -A && git commit -m 'task: auto-push' 2>/dev/null; git push origin main 2>/dev/null || true\")",
+      "Bash(python *)"
+    ]
+  },
+  "hooks": {
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git add -A && git commit -m 'task: auto-push' 2>/dev/null; git push origin main 2>/dev/null || true",
+            "statusMessage": "Pushing to GitHub...",
+            "async": true
+          }
+        ]
+      }
     ]
   }
 }
