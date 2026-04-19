@@ -176,8 +176,8 @@ DATE: 2026-04-19
 TOPIC: what is task one of the project? also break down each skill you are currently us
 --------------------------------------------------------------------------------
   - what is task one of the project? also break down each skill you are currently using
-  - the skill should be called task_documentation
-  - why are none of those files in github?
+  - Complete task one of the project, and make sure to use the task_documentation skill
+  - add a new skill and respective hook, so that whenever you finish a task, you push all respective files to the respective github repo
 
 
 ================================================================================
