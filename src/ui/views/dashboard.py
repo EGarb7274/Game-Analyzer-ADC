@@ -1,7 +1,202 @@
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout
+from collections import Counter
+from pathlib import Path
+
+from PyQt6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
+    QLineEdit, QPushButton, QGridLayout, QFrame, QMessageBox
+)
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from PyQt6.QtGui import QFont
+
+import config
+from src.api.riot_client import RiotClient
+from src.db.schema import open_db
+from src.db import cache as db_cache
+from src.analysis.stats import extract_match_stats
+
+DB_PATH = str(Path.home() / '.lol_adc_analyzer' / 'matches.db')
+
+
+class FetchWorker(QThread):
+    """Background thread: fetch and cache new match data."""
+    progress = pyqtSignal(str)
+    finished = pyqtSignal()
+    error = pyqtSignal(str)
+
+    def __init__(self, puuid: str, client: RiotClient, cfg: dict):
+        super().__init__()
+        self.puuid = puuid
+        self.client = client
+        self.cfg = cfg
+
+    def run(self):
+        try:
+            conn = open_db(DB_PATH)
+            self.progress.emit('Fetching match list...')
+            match_ids = self.client.get_match_ids(
+                self.puuid, count=self.cfg['match_count']
+            )
+            db_cache.save_match_ids(conn, self.puuid, match_ids)
+            uncached = db_cache.get_uncached_match_ids(conn, self.puuid)
+            for i, mid in enumerate(uncached):
+                self.progress.emit(f'Fetching match {i + 1}/{len(uncached)}...')
+                match_data = self.client.get_match(mid)
+                timeline_data = self.client.get_timeline(mid)
+                db_cache.save_match(conn, mid, match_data)
+                db_cache.save_timeline(conn, mid, timeline_data)
+            conn.close()
+            self.finished.emit()
+        except Exception as e:
+            self.error.emit(str(e))
+
+
+class StatCard(QFrame):
+    def __init__(self, title: str, value: str):
+        super().__init__()
+        self.setFrameShape(QFrame.Shape.Box)
+        self.setLineWidth(1)
+        layout = QVBoxLayout(self)
+        lbl_title = QLabel(title)
+        lbl_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        lbl_value = QLabel(value)
+        lbl_value.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        lbl_value.setFont(QFont('Segoe UI', 16, QFont.Weight.Bold))
+        layout.addWidget(lbl_title)
+        layout.addWidget(lbl_value)
 
 
 class DashboardView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        QVBoxLayout(self).addWidget(QLabel('Dashboard — coming soon'))
+        self._build_ui()
+
+    def _build_ui(self):
+        self._layout = QVBoxLayout(self)
+        self._layout.setContentsMargins(20, 20, 20, 20)
+
+        # Riot ID input row
+        id_row = QHBoxLayout()
+        self._name_input = QLineEdit()
+        self._name_input.setPlaceholderText('Game Name')
+        self._tag_input = QLineEdit()
+        self._tag_input.setPlaceholderText('TAG')
+        self._tag_input.setFixedWidth(80)
+        self._load_btn = QPushButton('Load')
+        self._load_btn.clicked.connect(self._on_load)
+        self._settings_btn = QPushButton('Settings')
+        self._settings_btn.clicked.connect(self._open_settings)
+        id_row.addWidget(QLabel('Riot ID:'))
+        id_row.addWidget(self._name_input)
+        id_row.addWidget(QLabel('#'))
+        id_row.addWidget(self._tag_input)
+        id_row.addWidget(self._load_btn)
+        id_row.addStretch()
+        id_row.addWidget(self._settings_btn)
+        self._layout.addLayout(id_row)
+
+        self._status_label = QLabel('')
+        self._layout.addWidget(self._status_label)
+
+        self._stats_grid = QGridLayout()
+        self._layout.addLayout(self._stats_grid)
+        self._layout.addStretch()
+
+    def _open_settings(self):
+        self.window().show_settings()
+
+    def _on_load(self):
+        cfg = config.load_config()
+        if not cfg.get('api_key'):
+            QMessageBox.warning(self, 'No API Key',
+                                'Please set your Riot API key in Settings first.')
+            self._open_settings()
+            return
+
+        game_name = self._name_input.text().strip()
+        tag_line = self._tag_input.text().strip()
+        if not game_name or not tag_line:
+            self._status_label.setText('Enter a Game Name and TAG.')
+            return
+
+        self._load_btn.setEnabled(False)
+        self._status_label.setText('Resolving Riot ID...')
+
+        try:
+            client = RiotClient(cfg['api_key'], cfg['region'], cfg['match_region'])
+            conn = open_db(DB_PATH)
+            summoner = db_cache.get_summoner_by_name(conn, game_name, tag_line)
+            if not summoner:
+                account = client.get_puuid(game_name, tag_line)
+                db_cache.upsert_summoner(conn, account['puuid'], game_name, tag_line)
+                puuid = account['puuid']
+            else:
+                puuid = summoner['puuid']
+            conn.close()
+
+            self._worker = FetchWorker(puuid, client, cfg)
+            self._worker.progress.connect(self._status_label.setText)
+            self._worker.finished.connect(
+                lambda: self._on_fetch_done(puuid, game_name, tag_line))
+            self._worker.error.connect(self._on_fetch_error)
+            self._worker.start()
+        except Exception as e:
+            self._status_label.setText(f'Error: {e}')
+            self._load_btn.setEnabled(True)
+
+    def _on_fetch_error(self, message: str):
+        self._status_label.setText(f'Error: {message}')
+        self._load_btn.setEnabled(True)
+
+    def _on_fetch_done(self, puuid: str, game_name: str, tag_line: str):
+        self._status_label.setText('Done. Computing stats...')
+        self._load_btn.setEnabled(True)
+        self._render_stats(puuid, game_name, tag_line)
+
+    def _render_stats(self, puuid: str, game_name: str, tag_line: str):
+        conn = open_db(DB_PATH)
+        match_ids = db_cache.get_cached_match_ids(conn, puuid)
+
+        all_stats = []
+        for mid in match_ids:
+            data = db_cache.get_match(conn, mid)
+            if data is None:
+                continue
+            try:
+                all_stats.append(extract_match_stats(data, puuid))
+            except (ValueError, KeyError):
+                continue
+        conn.close()
+
+        if not all_stats:
+            self._status_label.setText('No match data found.')
+            return
+
+        wins = sum(1 for s in all_stats if s['win'])
+        win_rate = round(wins / len(all_stats) * 100)
+        avg_kda = (
+            round(sum(s['kills'] for s in all_stats) / len(all_stats), 1),
+            round(sum(s['deaths'] for s in all_stats) / len(all_stats), 1),
+            round(sum(s['assists'] for s in all_stats) / len(all_stats), 1),
+        )
+        avg_cs = round(sum(s['cs_per_min'] for s in all_stats) / len(all_stats), 1)
+        top_champs = Counter(s['champion'] for s in all_stats).most_common(3)
+
+        # Clear old cards
+        while self._stats_grid.count():
+            item = self._stats_grid.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        self._stats_grid.addWidget(
+            StatCard('Summoner', f'{game_name}#{tag_line}'), 0, 0)
+        self._stats_grid.addWidget(
+            StatCard('Win Rate', f'{win_rate}%  ({wins}/{len(all_stats)})'), 0, 1)
+        self._stats_grid.addWidget(
+            StatCard('Avg KDA', f'{avg_kda[0]}/{avg_kda[1]}/{avg_kda[2]}'), 0, 2)
+        self._stats_grid.addWidget(
+            StatCard('Avg CS/min', str(avg_cs)), 0, 3)
+        top_champ_str = ', '.join(f'{c} ({n})' for c, n in top_champs)
+        self._stats_grid.addWidget(
+            StatCard('Top Champions', top_champ_str), 1, 0, 1, 4)
+
+        self._status_label.setText(f'Showing stats for {len(all_stats)} matches.')
