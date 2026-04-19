@@ -17,3 +17,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:32 UTC - Task 2: Config Module
 **What:** Created `config.py` with `load_config` and `save_config` functions backed by `~/.lol_adc_analyzer/config.json`, with defaults for api_key, region, match_region, and match_count. Created `tests/test_config.py` with 3 passing tests covering defaults, save/load roundtrip, and missing-key merging.
 **Why:** The app needs persistent config (API key + region) to make Riot API calls; this module provides that foundation with TDD-verified correctness.
+
+### 2026-04-19 09:35 UTC - Task 3: SQLite Schema and Cache
+**What:** Created `src/db/schema.py` with `init_db` (4 tables: summoners, match_ids, matches, match_timelines) and `open_db`. Created `src/db/cache.py` with full read/write functions for all tables. Fixed a `row_factory` bug by setting `sqlite3.Row` inside `init_db` so any connection gets named-column access. All 8 tests pass.
+**Why:** The app needs a local SQLite cache to avoid re-fetching match data from the Riot API on every launch; this layer persists summoner, match, and timeline data between sessions.
