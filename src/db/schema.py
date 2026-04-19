@@ -2,6 +2,7 @@ import sqlite3
 
 
 def init_db(conn: sqlite3.Connection) -> None:
+    conn.row_factory = sqlite3.Row
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS summoners (
             puuid       TEXT PRIMARY KEY,
