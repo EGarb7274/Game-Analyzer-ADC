@@ -61,3 +61,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 11:20 UTC - Task 13: Match Detail View
 **What:** Replaced the stub `src/ui/views/match_detail.py` with a full scrollable detail view containing six stat cards (KDA, CS/min, Damage Share, Gold, Vision Score, Kill Participation), a matplotlib item purchase timeline chart, a positioning heatmap overlaid on the LoL minimap, and a runes display. A back button navigates to Match History.
 **Why:** Users need a drill-down view per match showing exactly how they performed — item timing reveals build efficiency, the heatmap shows positional tendencies, and the stat cards provide quick at-a-glance numbers.
+
+### 2026-04-19 11:22 UTC - Task 14: Builds & Runes Reference Panel
+**What:** Replaced the stub `src/ui/views/builds_panel.py` with a two-panel layout: a fixed-width champion list on the left (populated from `data/builds.json`) and a scrollable build detail panel on the right showing build path, starting items, skill order, and full rune setup (keystone, primary/secondary paths, shards) with item names resolved via Data Dragon.
+**Why:** ADC players need a quick reference for optimal builds and rune pages per champion; this panel surfaces the bundled recommendations in a readable, navigable format without requiring internet access.
