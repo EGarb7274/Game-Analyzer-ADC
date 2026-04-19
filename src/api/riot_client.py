@@ -1,11 +1,12 @@
 import time
-from riotwatcher import LolWatcher, ApiError
+from riotwatcher import LolWatcher, RiotWatcher, ApiError
 
 
 class RiotClient:
     def __init__(self, api_key: str, region: str = 'na1',
                  match_region: str = 'americas'):
         self.watcher = LolWatcher(api_key)
+        self.riot_watcher = RiotWatcher(api_key)
         self.region = region
         self.match_region = match_region
 
@@ -24,7 +25,7 @@ class RiotClient:
     def get_puuid(self, game_name: str, tag_line: str) -> dict:
         """Returns {puuid, gameName, tagLine}."""
         return self._call_with_retry(
-            self.watcher.account.by_riot_id,
+            self.riot_watcher.account.by_riot_id,
             region=self.match_region,
             game_name=game_name,
             tag_line=tag_line,
