@@ -62,7 +62,7 @@ class MatchDetailView(QWidget):
 
         # Item timing chart
         self._content_layout.addWidget(QLabel('Item Timing'))
-        self._timing_canvas = FigureCanvas(Figure(figsize=(10, 2)))
+        self._timing_canvas = FigureCanvas(Figure(figsize=(10, 3)))
         self._content_layout.addWidget(self._timing_canvas)
 
         # Heatmap
@@ -150,21 +150,59 @@ class MatchDetailView(QWidget):
     def _render_item_timing(self, timings: list[dict], item_ids: list[int]):
         fig = self._timing_canvas.figure
         fig.clear()
+        fig.patch.set_facecolor('#1a1a2e')
         ax = fig.add_subplot(111)
+        ax.set_facecolor('#16213e')
 
         if not timings:
-            ax.text(0.5, 0.5, 'No item timing data', ha='center', va='center')
+            ax.text(0.5, 0.5, 'No item timing data', ha='center', va='center',
+                    color='#aaaaaa', fontsize=10)
+            ax.set_xticks([])
+            ax.set_yticks([])
         else:
             times = [t['timestamp_min'] for t in timings]
             names = [self._dragon.get_item_name(t['item_id']) for t in timings]
-            ax.scatter(times, [1] * len(times), s=100, zorder=3)
-            for t, name in zip(times, names):
-                ax.text(t, 1.05, name, ha='center', va='bottom',
-                        fontsize=7, rotation=45)
-            ax.set_xlim(0, max(times) + 5)
-            ax.set_xlabel('Minutes')
+
+            # Timeline spine
+            x_max = max(times) + 3
+            ax.hlines(0, 0, x_max, colors='#c89b3c', linewidth=2, zorder=1)
+
+            # Alternating above/below label placement to reduce overlap
+            for i, (t, name) in enumerate(zip(times, names)):
+                above = i % 2 == 0
+                y_dot = 0
+                y_label = 0.55 if above else -0.55
+                y_line_start = 0.08 if above else -0.08
+                y_line_end = 0.45 if above else -0.45
+
+                # Connector line
+                ax.vlines(t, y_line_start, y_line_end,
+                          colors='#c89b3c', linewidth=1, alpha=0.6, zorder=2)
+                # Gold dot on the timeline
+                ax.scatter([t], [y_dot], s=80, color='#c89b3c',
+                           zorder=3, edgecolors='#fff6e0', linewidths=0.8)
+                # Item name label
+                ax.text(t, y_label, name,
+                        ha='center', va='bottom' if above else 'top',
+                        fontsize=7.5, color='#e8d5a3',
+                        fontweight='bold',
+                        bbox=dict(boxstyle='round,pad=0.2', facecolor='#0f3460',
+                                  edgecolor='#c89b3c', alpha=0.85, linewidth=0.8))
+                # Minute label below/above dot
+                ax.text(t, -0.14 if above else 0.14,
+                        f'{t:.1f}m', ha='center',
+                        va='top' if above else 'bottom',
+                        fontsize=6.5, color='#aaaaaa')
+
+            ax.set_xlim(-1, x_max)
+            ax.set_ylim(-1.1, 1.1)
+            ax.set_xlabel('Game Time (minutes)', color='#aaaaaa', fontsize=8)
+            ax.tick_params(colors='#aaaaaa', labelsize=7)
             ax.set_yticks([])
-            ax.set_title('Item Purchase Timeline')
+            for spine in ax.spines.values():
+                spine.set_edgecolor('#333355')
+            ax.set_title('Item Purchase Timeline', color='#c89b3c',
+                         fontsize=10, fontweight='bold', pad=6)
 
         try:
             fig.tight_layout()
