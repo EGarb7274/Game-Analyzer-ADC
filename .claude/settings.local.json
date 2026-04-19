@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth *)",
+      "Bash(where.exe gh *)",
+      "Bash(gh repo *)",
+      "Read(//c/tmp/**)",
+      "Read(//c/Users/egarb/AppData/Local/Temp/test-project/**)",
+      "Read(//tmp/**)",
+      "Bash(gh api *)",
+      "Bash(mkdir -p data src/api src/db src/analysis src/ui/views tests)",
+      "Bash(touch src/__init__.py src/api/__init__.py src/db/__init__.py src/analysis/__init__.py src/ui/__init__.py src/ui/views/__init__.py tests/__init__.py)",
+      "Bash(pip install *)",
+      "Bash(cat)",
+      "Bash(cp /tmp/README_current.md /tmp/README_updated.md)",
+      "Skill(update-config)",
+      "Bash(bash -c \"git add -A && git commit -m 'task: auto-push' 2>/dev/null; git push origin main 2>/dev/null || true\")"
+    ]
+  }
+}
