@@ -57,3 +57,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 11:18 UTC - Task 12: Match History View
 **What:** Replaced the stub `src/ui/views/match_history.py` with a full `QTableWidget`-based implementation showing Champion, Result (green/red), KDA, CS/min, Damage, Duration, and Items columns. The view auto-loads the most recently updated summoner from the cache, supports a Refresh button, and emits a `match_selected` signal on double-click for navigation to match detail.
 **Why:** Users need a scrollable list of recent matches to review performance trends; the table provides a compact, sortable overview and the double-click signal wires it into the match detail navigation flow.
+
+### 2026-04-19 11:20 UTC - Task 13: Match Detail View
+**What:** Replaced the stub `src/ui/views/match_detail.py` with a full scrollable detail view containing six stat cards (KDA, CS/min, Damage Share, Gold, Vision Score, Kill Participation), a matplotlib item purchase timeline chart, a positioning heatmap overlaid on the LoL minimap, and a runes display. A back button navigates to Match History.
+**Why:** Users need a drill-down view per match showing exactly how they performed — item timing reveals build efficiency, the heatmap shows positional tendencies, and the stat cards provide quick at-a-glance numbers.
