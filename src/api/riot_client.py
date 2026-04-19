@@ -37,7 +37,7 @@ class RiotClient:
         return self._call_with_retry(
             self.watcher.match.matchlist_by_puuid,
             region=self.match_region,
-            encrypted_puuid=puuid,
+            puuid=puuid,
             queue=queue,
             count=count,
         )

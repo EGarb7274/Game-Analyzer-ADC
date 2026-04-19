@@ -35,7 +35,7 @@ def test_get_match_ids_calls_matchlist(client, mock_watcher):
     result = client.get_match_ids('abc123', count=20)
     assert result == ['NA1_1', 'NA1_2']
     lol.match.matchlist_by_puuid.assert_called_once_with(
-        region='americas', encrypted_puuid='abc123', queue=420, count=20
+        region='americas', puuid='abc123', queue=420, count=20
     )
 
 
