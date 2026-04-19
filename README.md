@@ -29,3 +29,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:42 UTC - Task 5: Data Dragon Loader
 **What:** Created `src/api/data_dragon.py` with a `DataDragon` class that lazily fetches and locally caches item data, champion data, and the minimap image from Riot's Data Dragon CDN. Created `data/builds.json` with bundled build/rune/skill-order recommendations for 5 ADC champions (Jinx, Jhin, Caitlyn, Ezreal, Kai'Sa). Import verified clean.
 **Why:** The UI needs item names, champion names, and a minimap background without making live API calls on every render; Data Dragon provides this static game data with a local cache to avoid repeated network requests.
+
+### 2026-04-19 09:45 UTC - Task 6: Stats Analysis
+**What:** Created `src/analysis/stats.py` with `get_participant`, `calc_kda`, `calc_cs_per_min`, `calc_damage_share`, `calc_kill_participation`, and `extract_match_stats`. All 7 tests pass including kill participation returning values over 100% (correct LoL behaviour when kills+assists exceed team kills).
+**Why:** The dashboard and match detail views need derived per-game statistics (KDA, CS/min, damage share, kill participation) computed from raw Riot API match JSON.
