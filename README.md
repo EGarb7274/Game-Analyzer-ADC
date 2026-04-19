@@ -49,3 +49,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:57 UTC - Task 10: Settings Dialog
 **What:** Created `src/ui/settings_dialog.py` with a `QDialog` containing a password-masked API key input, a region combo box (6 regions with matched platform/match-region pairs), a match count spinbox (5–100), and OK/Cancel buttons that persist settings via `config.save_config`. Import verified clean.
 **Why:** Users need a way to enter their Riot API key and select their region before the app can fetch any data; this dialog is launched from the Dashboard's Settings button and from `MainWindow.show_settings`.
+
+### 2026-04-19 11:16 UTC - Task 11: Summoner Dashboard View
+**What:** Replaced the stub `src/ui/views/dashboard.py` with a full implementation — `FetchWorker` (QThread) handles background match fetching (match IDs, uncached match data, timelines), `StatCard` (QFrame) renders titled stat boxes, and `DashboardView` (QWidget) provides a Riot ID input row, Settings button, status label, and a stats grid showing win rate, avg KDA, avg CS/min, and top 3 champions.
+**Why:** The dashboard is the primary entry point for users; it needs to fetch and display aggregate performance stats without blocking the UI, which requires background threading via QThread.
