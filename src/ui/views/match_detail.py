@@ -166,7 +166,10 @@ class MatchDetailView(QWidget):
             ax.set_yticks([])
             ax.set_title('Item Purchase Timeline')
 
-        fig.tight_layout()
+        try:
+            fig.tight_layout()
+        except Exception:
+            pass
         self._timing_canvas.draw()
 
     def _render_heatmap(self, positions: dict):
@@ -201,7 +204,10 @@ class MatchDetailView(QWidget):
         if any([positions['kills'], positions['deaths'], positions['assists']]):
             ax.legend(loc='upper right', fontsize=8)
 
-        fig.tight_layout()
+        try:
+            fig.tight_layout()
+        except Exception:
+            pass
         self._heatmap_canvas.draw()
 
     def _render_runes(self, perks: dict):
