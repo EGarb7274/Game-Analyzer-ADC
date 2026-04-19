@@ -15,7 +15,12 @@
       "Bash(cp /tmp/README_current.md /tmp/README_updated.md)",
       "Skill(update-config)",
       "Bash(bash -c \"git add -A && git commit -m 'task: auto-push' 2>/dev/null; git push origin main 2>/dev/null || true\")",
-      "Bash(python *)"
+      "Bash(python *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git pull *)",
+      "Bash(git push *)",
+      "Bash(git stash *)"
     ]
   },
   "hooks": {
