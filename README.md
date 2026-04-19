@@ -65,3 +65,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 11:22 UTC - Task 14: Builds & Runes Reference Panel
 **What:** Replaced the stub `src/ui/views/builds_panel.py` with a two-panel layout: a fixed-width champion list on the left (populated from `data/builds.json`) and a scrollable build detail panel on the right showing build path, starting items, skill order, and full rune setup (keystone, primary/secondary paths, shards) with item names resolved via Data Dragon.
 **Why:** ADC players need a quick reference for optimal builds and rune pages per champion; this panel surfaces the bundled recommendations in a readable, navigable format without requiring internet access.
+
+### 2026-04-19 11:24 UTC - Task 15: Integration and End-to-End Smoke Test
+**What:** Ran the full 34-test suite — all 34 tests pass across config, cache, Riot client, stats, timeline, and builds modules. Verified all UI view imports resolve cleanly (DashboardView, MatchHistoryView, MatchDetailView, BuildsPanelView). Confirmed all files are committed and pushed to GitHub with the complete implementation.
+**Why:** Final verification that the full application is coherent end-to-end before declaring the implementation plan complete. The test suite confirms all data-layer logic is correct; import checks confirm the UI layer compiles without errors.
