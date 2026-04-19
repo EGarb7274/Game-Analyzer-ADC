@@ -177,7 +177,7 @@ TOPIC: what is task one of the project? also break down each skill you are curre
 --------------------------------------------------------------------------------
   - what is task one of the project? also break down each skill you are currently using
   - Complete task one of the project, and make sure to use the task_documentation skill
-  - add a new skill and respective hook, so that whenever you finish a task, you push all respective files to the respective github repo
+  - complete task two making sure to use both skills
 
 
 ================================================================================
