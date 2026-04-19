@@ -21,3 +21,7 @@ Project repository for the Game Analyzer ADC.
 ### 2026-04-19 09:35 UTC - Task 3: SQLite Schema and Cache
 **What:** Created `src/db/schema.py` with `init_db` (4 tables: summoners, match_ids, matches, match_timelines) and `open_db`. Created `src/db/cache.py` with full read/write functions for all tables. Fixed a `row_factory` bug by setting `sqlite3.Row` inside `init_db` so any connection gets named-column access. All 8 tests pass.
 **Why:** The app needs a local SQLite cache to avoid re-fetching match data from the Riot API on every launch; this layer persists summoner, match, and timeline data between sessions.
+
+### 2026-04-19 09:39 UTC - Task 4: Riot API Client
+**What:** Created `src/api/riot_client.py` with `RiotClient` wrapping riotwatcher — `get_puuid`, `get_match_ids`, `get_match`, `get_timeline`, all backed by `_call_with_retry` for 429 rate-limit handling. Created `tests/test_riot_client.py` with 5 passing tests covering each method and retry logic. Fixed a test bug: `riotwatcher.ApiError` is `requests.HTTPError` and requires `response=` as a keyword arg, not positional.
+**Why:** All match data fetching flows through the Riot API; the retry wrapper ensures the app handles rate limits gracefully without crashing.
