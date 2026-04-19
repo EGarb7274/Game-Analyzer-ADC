@@ -1,0 +1,67 @@
+{
+  "Jinx": {
+    "build": [3031, 3046, 3094, 3036, 3072, 3026],
+    "runes": {
+      "keystone": "Lethal Tempo",
+      "primary_path": "Precision",
+      "primary_runes": ["Triumph", "Legend: Bloodline", "Coup de Grace"],
+      "secondary_path": "Domination",
+      "secondary_runes": ["Taste of Blood", "Treasure Hunter"],
+      "shards": ["Adaptive Force", "Adaptive Force", "Armor"]
+    },
+    "skill_order": "R > Q > E > W",
+    "starting_items": [1055, 2003]
+  },
+  "Jhin": {
+    "build": [6672, 3031, 3036, 3094, 3139, 3026],
+    "runes": {
+      "keystone": "Fleet Footwork",
+      "primary_path": "Precision",
+      "primary_runes": ["Triumph", "Legend: Bloodline", "Coup de Grace"],
+      "secondary_path": "Sorcery",
+      "secondary_runes": ["Absolute Focus", "Gathering Storm"],
+      "shards": ["Adaptive Force", "Adaptive Force", "Armor"]
+    },
+    "skill_order": "R > Q > W > E",
+    "starting_items": [1055, 2003]
+  },
+  "Caitlyn": {
+    "build": [3031, 3094, 3036, 3046, 3072, 3026],
+    "runes": {
+      "keystone": "Lethal Tempo",
+      "primary_path": "Precision",
+      "primary_runes": ["Presence of Mind", "Legend: Bloodline", "Coup de Grace"],
+      "secondary_path": "Inspiration",
+      "secondary_runes": ["Magical Footwear", "Biscuit Delivery"],
+      "shards": ["Adaptive Force", "Adaptive Force", "Armor"]
+    },
+    "skill_order": "R > Q > E > W",
+    "starting_items": [1055, 2003]
+  },
+  "Ezreal": {
+    "build": [3004, 6035, 3057, 3142, 3072, 3026],
+    "runes": {
+      "keystone": "Arcane Comet",
+      "primary_path": "Sorcery",
+      "primary_runes": ["Manaflow Band", "Transcendence", "Scorch"],
+      "secondary_path": "Precision",
+      "secondary_runes": ["Presence of Mind", "Legend: Bloodline"],
+      "shards": ["Adaptive Force", "Adaptive Force", "Armor"]
+    },
+    "skill_order": "R > Q > E > W",
+    "starting_items": [3070, 2003]
+  },
+  "Kai'Sa": {
+    "build": [3153, 3115, 3174, 3046, 3026, 3036],
+    "runes": {
+      "keystone": "Hail of Blades",
+      "primary_path": "Domination",
+      "primary_runes": ["Cheap Shot", "Eyeball Collection", "Treasure Hunter"],
+      "secondary_path": "Precision",
+      "secondary_runes": ["Legend: Bloodline", "Coup de Grace"],
+      "shards": ["Adaptive Force", "Adaptive Force", "Armor"]
+    },
+    "skill_order": "R > Q > W > E",
+    "starting_items": [1055, 2003]
+  }
+}
