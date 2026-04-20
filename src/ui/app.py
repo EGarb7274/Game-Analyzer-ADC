@@ -7,6 +7,7 @@ from src.ui.views.dashboard import DashboardView
 from src.ui.views.match_history import MatchHistoryView
 from src.ui.views.match_detail import MatchDetailView
 from src.ui.views.builds_panel import BuildsPanelView
+from src.ui.views.performance import PerformanceView
 
 
 class MainWindow(QMainWindow):
@@ -26,7 +27,7 @@ class MainWindow(QMainWindow):
         # Sidebar — 200px, font and active state handled by APP_STYLESHEET
         self.sidebar = QListWidget()
         self.sidebar.setFixedWidth(200)
-        for item in ['Dashboard', 'Match History', 'Builds & Runes']:
+        for item in ['Dashboard', 'Match History', 'Builds & Runes', 'Performance']:
             self.sidebar.addItem(item)
         self.sidebar.setCurrentRow(0)
         self.sidebar.currentRowChanged.connect(self._on_nav_changed)
@@ -37,10 +38,12 @@ class MainWindow(QMainWindow):
         self.match_history_view = MatchHistoryView(self)
         self.match_detail_view = MatchDetailView(self)
         self.builds_panel_view = BuildsPanelView(self)
+        self.performance_view = PerformanceView(self)
 
         self.stack.addWidget(self.dashboard_view)     # index 0
         self.stack.addWidget(self.match_history_view) # index 1
         self.stack.addWidget(self.builds_panel_view)  # index 2
+        self.stack.addWidget(self.performance_view)   # index 3
 
         root_layout.addWidget(self.sidebar)
         root_layout.addWidget(self.stack)
@@ -52,6 +55,8 @@ class MainWindow(QMainWindow):
 
     def _on_nav_changed(self, index: int):
         self.stack.setCurrentIndex(index)
+        if index == 3:
+            self.performance_view.refresh()
 
     def _on_match_selected(self, match_id: str):
         self.match_detail_view.load_match(match_id)
