@@ -20,7 +20,8 @@
       "Bash(git commit *)",
       "Bash(git pull *)",
       "Bash(git push *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(echo \"Exit code: $?\")"
     ]
   },
   "hooks": {

@@ -176,8 +176,18 @@ DATE: 2026-04-19
 TOPIC: what is task one of the project? also break down each skill you are currently us
 --------------------------------------------------------------------------------
   - what is task one of the project? also break down each skill you are currently using
-  - why are none of those files in github?
-  - proceed with task four
+  - give me a test riot ID and tag I can use
+  - <task-notification> <task-id>bdknur275</task-id> <tool-use-id>toolu_01ASV5i92gF2z2fjkMHkajzc</tool-use-id> <output-file>C:\Users\egarb\AppData\Local\Temp\claude\C--Users-egarb--claude-projects-C--Users-egarb-Game-Analyzer-ADC\2b082bba-a329-47e0-ae1e-
+
+
+--------------------------------------------------------------------------------
+FILE: b6324ace-9e03-4bb0-a9f5-fba4e792efec.jsonl
+DATE: 2026-04-20
+TOPIC: Read the file called UI Design Pricipals and then create a skill and respective 
+--------------------------------------------------------------------------------
+  - Read the file called UI Design Pricipals and then create a skill and respective hook that is based on this file
+  - extract the text directly from the document
+  - Session concluded after above topics
 
 
 ================================================================================
