@@ -104,3 +104,78 @@ def test_extract_position_events_assists():
     events = extract_position_events(timeline, participant_id=1)
     assert len(events['assists']) == 1
     assert events['assists'][0]['x'] == 6000
+
+
+# ── extract_early_stats fixtures ──────────────────────────────────────────────
+
+SAMPLE_MATCH_WITH_TEAMS = {
+    'info': {
+        'participants': [
+            {'puuid': 'player1', 'participantId': 1, 'teamId': 100},
+            {'puuid': 'player2', 'participantId': 2, 'teamId': 200},
+        ]
+    }
+}
+
+SAMPLE_TIMELINE_EARLY = {
+    'info': {
+        'frames': [
+            {
+                'timestamp': 0,
+                'participantFrames': {
+                    '1': {'minionsKilled': 0, 'jungleMinionsKilled': 0, 'totalGold': 500},
+                    '2': {'minionsKilled': 0, 'jungleMinionsKilled': 0, 'totalGold': 500},
+                },
+                'events': [],
+            },
+            {
+                'timestamp': 600000,  # 10 min
+                'participantFrames': {
+                    '1': {'minionsKilled': 60, 'jungleMinionsKilled': 3, 'totalGold': 3500},
+                    '2': {'minionsKilled': 40, 'jungleMinionsKilled': 0, 'totalGold': 3000},
+                },
+                'events': [],
+            },
+            {
+                'timestamp': 900000,  # 15 min
+                'participantFrames': {
+                    '1': {'minionsKilled': 95, 'jungleMinionsKilled': 5, 'totalGold': 5200},
+                    '2': {'minionsKilled': 70, 'jungleMinionsKilled': 0, 'totalGold': 4800},
+                },
+                'events': [],
+            },
+        ]
+    }
+}
+
+
+from src.analysis.timeline import extract_early_stats
+
+
+def test_extract_early_stats_cs():
+    stats = extract_early_stats(SAMPLE_TIMELINE_EARLY, participant_id=1,
+                                match_data=SAMPLE_MATCH_WITH_TEAMS)
+    assert stats['cs_at_10'] == 63   # 60 + 3
+    assert stats['cs_at_15'] == 100  # 95 + 5
+
+
+def test_extract_early_stats_gold_diff():
+    stats = extract_early_stats(SAMPLE_TIMELINE_EARLY, participant_id=1,
+                                match_data=SAMPLE_MATCH_WITH_TEAMS)
+    assert stats['gold_diff_at_10'] == 500   # 3500 - 3000
+    assert stats['gold_diff_at_15'] == 400   # 5200 - 4800
+
+
+def test_extract_early_stats_missing_frame_returns_zeros():
+    short_timeline = {'info': {'frames': [
+        {'timestamp': 0,
+         'participantFrames': {
+             '1': {'minionsKilled': 0, 'jungleMinionsKilled': 0, 'totalGold': 500},
+             '2': {'minionsKilled': 0, 'jungleMinionsKilled': 0, 'totalGold': 500},
+         },
+         'events': []}
+    ]}}
+    stats = extract_early_stats(short_timeline, participant_id=1,
+                                match_data=SAMPLE_MATCH_WITH_TEAMS)
+    assert stats['cs_at_15'] == 0
+    assert stats['gold_diff_at_15'] == 0
