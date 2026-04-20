@@ -186,8 +186,8 @@ DATE: 2026-04-20
 TOPIC: Read the file called UI Design Pricipals and then create a skill and respective 
 --------------------------------------------------------------------------------
   - Read the file called UI Design Pricipals and then create a skill and respective hook that is based on this file
-  - edit the existing program with the new design pricipals in mind
-  - edit the existing UI/UX of the program with ui-design-priciples skill
+  - <task-notification> <task-id>ban2mxb89</task-id> <tool-use-id>toolu_017QQAB3dP2h4q41DL4pf57Y</tool-use-id> <output-file>C:\Users\egarb\AppData\Local\Temp\claude\C--Users-egarb--claude-projects-C--Users-egarb-Game-Analyzer-ADC\b6324ace-9e03-4bb0-a9f5-
+  - show the data, but also give a breif explanation
 
 
 ================================================================================

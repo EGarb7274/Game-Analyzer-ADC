@@ -10,7 +10,7 @@ import numpy as np
 
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QGridLayout, QScrollArea, QPushButton
+    QGridLayout, QScrollArea, QPushButton, QSizePolicy
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
@@ -67,11 +67,17 @@ class MatchDetailView(QWidget):
         self._content_layout.addLayout(self._stats_grid)
 
         self._content_layout.addWidget(section_label('Item Purchase Timeline'))
-        self._timing_canvas = FigureCanvas(Figure(figsize=(10, 3)))
+        self._timing_canvas = FigureCanvas(Figure(figsize=(14, 5)))
+        self._timing_canvas.setMinimumHeight(300)
+        self._timing_canvas.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._content_layout.addWidget(self._timing_canvas)
 
         self._content_layout.addWidget(section_label('Positioning (Kills / Deaths / Assists)'))
-        self._heatmap_canvas = FigureCanvas(Figure(figsize=(5, 5)))
+        self._heatmap_canvas = FigureCanvas(Figure(figsize=(8, 8)))
+        self._heatmap_canvas.setMinimumHeight(480)
+        self._heatmap_canvas.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._content_layout.addWidget(self._heatmap_canvas)
 
         self._content_layout.addWidget(section_label('Runes'))
@@ -174,25 +180,25 @@ class MatchDetailView(QWidget):
                 # Item name label
                 ax.text(t, y_label, name,
                         ha='center', va='bottom' if above else 'top',
-                        fontsize=7.5, color='#e8d5a3',
+                        fontsize=10, color='#e8d5a3',
                         fontweight='bold',
-                        bbox=dict(boxstyle='round,pad=0.2', facecolor='#0f3460',
-                                  edgecolor='#c89b3c', alpha=0.85, linewidth=0.8))
+                        bbox=dict(boxstyle='round,pad=0.3', facecolor='#0f3460',
+                                  edgecolor='#c89b3c', alpha=0.85, linewidth=1))
                 # Minute label below/above dot
                 ax.text(t, -0.14 if above else 0.14,
                         f'{t:.1f}m', ha='center',
                         va='top' if above else 'bottom',
-                        fontsize=6.5, color='#aaaaaa')
+                        fontsize=9, color='#aaaaaa')
 
             ax.set_xlim(-1, x_max)
             ax.set_ylim(-1.1, 1.1)
-            ax.set_xlabel('Game Time (minutes)', color='#aaaaaa', fontsize=8)
-            ax.tick_params(colors='#aaaaaa', labelsize=7)
+            ax.set_xlabel('Game Time (minutes)', color='#aaaaaa', fontsize=11)
+            ax.tick_params(colors='#aaaaaa', labelsize=10)
             ax.set_yticks([])
             for spine in ax.spines.values():
                 spine.set_edgecolor('#333355')
             ax.set_title('Item Purchase Timeline', color='#c89b3c',
-                         fontsize=10, fontweight='bold', pad=6)
+                         fontsize=13, fontweight='bold', pad=8)
 
         try:
             fig.tight_layout()
@@ -232,9 +238,10 @@ class MatchDetailView(QWidget):
         ax.set_ylim(MAP_HEIGHT, 0)  # flipped to match image origin at top-left
         ax.set_xticks([])
         ax.set_yticks([])
-        ax.set_title('Positioning Heatmap')
+        ax.set_title('Positioning Heatmap', color='#c89b3c',
+                     fontsize=13, fontweight='bold', pad=8)
         if any([positions['kills'], positions['deaths'], positions['assists']]):
-            ax.legend(loc='upper right', fontsize=8)
+            ax.legend(loc='upper right', fontsize=11)
 
         try:
             fig.tight_layout()
