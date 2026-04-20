@@ -25,6 +25,8 @@ class SettingsDialog(QDialog):
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(16)
 
         info = QLabel(
             'Get a free API key at <a href="https://developer.riotgames.com">'
@@ -34,6 +36,7 @@ class SettingsDialog(QDialog):
         layout.addWidget(info)
 
         form = QFormLayout()
+        form.setSpacing(12)
 
         self.api_key_input = QLineEdit(self._cfg.get('api_key', ''))
         self.api_key_input.setPlaceholderText('RGAPI-xxxxxxxx-xxxx-...')
@@ -61,6 +64,7 @@ class SettingsDialog(QDialog):
             QDialogButtonBox.StandardButton.Ok |
             QDialogButtonBox.StandardButton.Cancel
         )
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText('Save Settings')
         buttons.accepted.connect(self._save_and_accept)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
