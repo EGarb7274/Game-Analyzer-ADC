@@ -5,7 +5,8 @@ from PyQt6.QtWidgets import (
     QHeaderView, QLabel, QPushButton, QHBoxLayout
 )
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import QColor, QFont
+from src.ui.theme import section_label, SUCCESS, ERROR, TEXT_SEC, TYPE_SMALL
 
 import config
 from src.db.schema import open_db
@@ -27,10 +28,16 @@ class MatchHistoryView(QWidget):
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(16)
+
+        title = QLabel('Match History')
+        title.setFont(QFont('Segoe UI', 20, QFont.Weight.Bold))
+        layout.addWidget(title)
 
         top_row = QHBoxLayout()
         self._status_label = QLabel('Load a summoner from the Dashboard first.')
+        self._status_label.setStyleSheet(f'color: {TEXT_SEC}; font-size: {TYPE_SMALL}px;')
         self._refresh_btn = QPushButton('Refresh')
         self._refresh_btn.clicked.connect(self.refresh)
         top_row.addWidget(self._status_label)
@@ -44,6 +51,10 @@ class MatchHistoryView(QWidget):
             QHeaderView.ResizeMode.Stretch)
         self._table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self._table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self._table.setAlternatingRowColors(True)
+        self._table.setShowGrid(False)
+        self._table.verticalHeader().setVisible(False)
+        self._table.verticalHeader().setDefaultSectionSize(40)
         self._table.cellDoubleClicked.connect(self._on_row_double_clicked)
         layout.addWidget(self._table)
 
@@ -76,7 +87,7 @@ class MatchHistoryView(QWidget):
 
         conn.close()
         self._status_label.setText(
-            f'{self._table.rowCount()} matches loaded. Double-click a row for details.')
+            f'{self._table.rowCount()} matches — double-click a row for details.')
 
     def _add_row(self, match_id: str, stats: dict):
         row = self._table.rowCount()
@@ -93,9 +104,10 @@ class MatchHistoryView(QWidget):
         kda_str = f"{stats['kills']}/{stats['deaths']}/{stats['assists']}"
 
         self._table.setItem(row, 0, cell(stats['champion']))
-        result_item = cell('WIN' if stats['win'] else 'LOSS')
-        result_item.setForeground(
-            QColor('#00cc44') if stats['win'] else QColor('#cc2200'))
+        result_text = 'WIN' if stats['win'] else 'LOSS'
+        result_item = cell(result_text)
+        result_item.setForeground(QColor(SUCCESS) if stats['win'] else QColor(ERROR))
+        result_item.setFont(QFont('Segoe UI', 13, QFont.Weight.Bold))
         self._table.setItem(row, 1, result_item)
         self._table.setItem(row, 2, cell(kda_str))
         self._table.setItem(row, 3, cell(str(stats['cs_per_min'])))

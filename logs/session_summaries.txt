@@ -186,8 +186,8 @@ DATE: 2026-04-20
 TOPIC: Read the file called UI Design Pricipals and then create a skill and respective 
 --------------------------------------------------------------------------------
   - Read the file called UI Design Pricipals and then create a skill and respective hook that is based on this file
-  - extract the text directly from the document
-  - Session concluded after above topics
+  - edit the existing program with the new design pricipals in mind
+  - edit the existing UI/UX of the program with ui-design-priciples skill
 
 
 ================================================================================
