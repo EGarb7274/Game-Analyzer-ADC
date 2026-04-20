@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout,
     QListWidget, QStackedWidget, QStatusBar
 )
-from PyQt6.QtGui import QFont
 
 from src.ui.views.dashboard import DashboardView
 from src.ui.views.match_history import MatchHistoryView
@@ -24,10 +23,9 @@ class MainWindow(QMainWindow):
         root_layout.setContentsMargins(0, 0, 0, 0)
         root_layout.setSpacing(0)
 
-        # Sidebar
+        # Sidebar — 200px, font and active state handled by APP_STYLESHEET
         self.sidebar = QListWidget()
-        self.sidebar.setFixedWidth(180)
-        self.sidebar.setFont(QFont('Segoe UI', 11))
+        self.sidebar.setFixedWidth(200)
         for item in ['Dashboard', 'Match History', 'Builds & Runes']:
             self.sidebar.addItem(item)
         self.sidebar.setCurrentRow(0)
