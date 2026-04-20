@@ -10,7 +10,7 @@ import numpy as np
 
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QGridLayout, QFrame, QScrollArea, QPushButton
+    QGridLayout, QScrollArea, QPushButton
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
@@ -22,6 +22,7 @@ from src.analysis.timeline import (
     get_participant_id, extract_item_timings, extract_position_events
 )
 from src.api.data_dragon import DataDragon
+from src.ui.theme import StatCard, section_label
 
 DB_PATH = str(Path.home() / '.lol_adc_analyzer' / 'matches.db')
 # League of Legends map coordinate bounds
@@ -37,43 +38,45 @@ class MatchDetailView(QWidget):
 
     def _build_ui(self):
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(10, 10, 10, 10)
+        outer.setContentsMargins(24, 24, 24, 24)
+        outer.setSpacing(0)
 
-        # Back button
         back_btn = QPushButton('← Back to Match History')
         back_btn.clicked.connect(self._go_back)
+        back_btn.setFixedHeight(34)
+        back_btn.setMaximumWidth(200)
         outer.addWidget(back_btn)
+        outer.addSpacing(16)
 
-        # Scrollable content area
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         content = QWidget()
         self._content_layout = QVBoxLayout(content)
+        self._content_layout.setContentsMargins(0, 0, 16, 0)
+        self._content_layout.setSpacing(8)
         scroll.setWidget(content)
         outer.addWidget(scroll)
 
         self._title_label = QLabel('Select a match from Match History')
-        self._title_label.setFont(QFont('Segoe UI', 14, QFont.Weight.Bold))
+        self._title_label.setFont(QFont('Segoe UI', 20, QFont.Weight.Bold))
         self._content_layout.addWidget(self._title_label)
+        self._content_layout.addSpacing(8)
 
-        # Stats grid
         self._stats_grid = QGridLayout()
+        self._stats_grid.setSpacing(16)
         self._content_layout.addLayout(self._stats_grid)
 
-        # Item timing chart
-        self._content_layout.addWidget(QLabel('Item Timing'))
+        self._content_layout.addWidget(section_label('Item Purchase Timeline'))
         self._timing_canvas = FigureCanvas(Figure(figsize=(10, 3)))
         self._content_layout.addWidget(self._timing_canvas)
 
-        # Heatmap
-        self._content_layout.addWidget(QLabel('Positioning (Kills/Deaths/Assists)'))
+        self._content_layout.addWidget(section_label('Positioning (Kills / Deaths / Assists)'))
         self._heatmap_canvas = FigureCanvas(Figure(figsize=(5, 5)))
         self._content_layout.addWidget(self._heatmap_canvas)
 
-        # Runes
+        self._content_layout.addWidget(section_label('Runes'))
         self._runes_label = QLabel('')
         self._runes_label.setWordWrap(True)
-        self._content_layout.addWidget(QLabel('Runes Used'))
         self._content_layout.addWidget(self._runes_label)
         self._content_layout.addStretch()
 
@@ -125,27 +128,14 @@ class MatchDetailView(QWidget):
             if item.widget():
                 item.widget().deleteLater()
 
-        def card(title: str, value: str) -> QFrame:
-            f = QFrame()
-            f.setFrameShape(QFrame.Shape.Box)
-            v = QVBoxLayout(f)
-            lbl_t = QLabel(title)
-            lbl_t.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            lbl_v = QLabel(value)
-            lbl_v.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            lbl_v.setFont(QFont('Segoe UI', 12, QFont.Weight.Bold))
-            v.addWidget(lbl_t)
-            v.addWidget(lbl_v)
-            return f
-
         kda = f"{stats['kills']}/{stats['deaths']}/{stats['assists']}"
-        self._stats_grid.addWidget(card('KDA', kda), 0, 0)
-        self._stats_grid.addWidget(card('CS/min', str(stats['cs_per_min'])), 0, 1)
-        self._stats_grid.addWidget(card('Damage Share', f"{stats['damage_share']}%"), 0, 2)
-        self._stats_grid.addWidget(card('Gold Earned', f"{stats['gold_earned']:,}"), 0, 3)
-        self._stats_grid.addWidget(card('Vision Score', str(stats['vision_score'])), 0, 4)
+        self._stats_grid.addWidget(StatCard('KDA', kda), 0, 0)
+        self._stats_grid.addWidget(StatCard('CS/min', str(stats['cs_per_min'])), 0, 1)
+        self._stats_grid.addWidget(StatCard('Damage Share', f"{stats['damage_share']}%"), 0, 2)
+        self._stats_grid.addWidget(StatCard('Gold Earned', f"{stats['gold_earned']:,}"), 0, 3)
+        self._stats_grid.addWidget(StatCard('Vision Score', str(stats['vision_score'])), 0, 4)
         self._stats_grid.addWidget(
-            card('Kill Participation', f"{stats['kill_participation']}%"), 0, 5)
+            StatCard('Kill Participation', f"{stats['kill_participation']}%"), 0, 5)
 
     def _render_item_timing(self, timings: list[dict], item_ids: list[int]):
         fig = self._timing_canvas.figure
