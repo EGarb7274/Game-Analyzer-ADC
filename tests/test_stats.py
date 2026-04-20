@@ -22,6 +22,8 @@ SAMPLE_MATCH = {
                 'totalDamageDealtToChampions': 30000,
                 'goldEarned': 15000,
                 'visionScore': 25,
+                'wardsPlaced': 8,
+                'visionWardsBoughtInGame': 2,
                 'item0': 3031, 'item1': 3046, 'item2': 3094,
                 'item3': 3036, 'item4': 3072, 'item5': 0, 'item6': 0,
                 'perks': {'styles': []},
@@ -40,6 +42,8 @@ SAMPLE_MATCH = {
                 'totalDamageDealtToChampions': 10000,
                 'goldEarned': 8000,
                 'visionScore': 60,
+                'wardsPlaced': 12,
+                'visionWardsBoughtInGame': 3,
                 'item0': 0, 'item1': 0, 'item2': 0,
                 'item3': 0, 'item4': 0, 'item5': 0, 'item6': 0,
                 'perks': {'styles': []},
@@ -91,3 +95,9 @@ def test_extract_match_stats_returns_full_dict():
     assert stats['cs_per_min'] == 7.0
     assert stats['damage_share'] == 75.0
     assert stats['items'] == [3031, 3046, 3094, 3036, 3072, 0, 0]
+
+
+def test_extract_match_stats_includes_wards():
+    stats = extract_match_stats(SAMPLE_MATCH, 'player1')
+    assert stats['wards_placed'] == 8
+    assert stats['control_wards'] == 2

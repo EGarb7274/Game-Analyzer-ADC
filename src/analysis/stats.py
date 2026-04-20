@@ -57,4 +57,6 @@ def extract_match_stats(match_data: dict, puuid: str) -> dict:
         'game_duration': duration,
         'items': [participant[f'item{i}'] for i in range(7)],
         'perks': participant.get('perks', {}),
+        'wards_placed': participant.get('wardsPlaced', 0),
+        'control_wards': participant.get('visionWardsBoughtInGame', 0),
     }
