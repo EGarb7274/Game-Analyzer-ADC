@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QLineEdit, QPushButton, QGridLayout, QFrame, QMessageBox
+    QLineEdit, QPushButton, QGridLayout, QMessageBox
 )
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont
@@ -13,6 +13,7 @@ from src.api.riot_client import RiotClient
 from src.db.schema import open_db
 from src.db import cache as db_cache
 from src.analysis.stats import extract_match_stats
+from src.ui.theme import StatCard, section_label, TEXT_SEC, TYPE_SMALL
 
 DB_PATH = str(Path.home() / '.lol_adc_analyzer' / 'matches.db')
 
@@ -50,21 +51,6 @@ class FetchWorker(QThread):
             self.error.emit(str(e))
 
 
-class StatCard(QFrame):
-    def __init__(self, title: str, value: str):
-        super().__init__()
-        self.setFrameShape(QFrame.Shape.Box)
-        self.setLineWidth(1)
-        layout = QVBoxLayout(self)
-        lbl_title = QLabel(title)
-        lbl_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        lbl_value = QLabel(value)
-        lbl_value.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        lbl_value.setFont(QFont('Segoe UI', 16, QFont.Weight.Bold))
-        layout.addWidget(lbl_title)
-        layout.addWidget(lbl_value)
-
-
 class DashboardView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -72,32 +58,57 @@ class DashboardView(QWidget):
 
     def _build_ui(self):
         self._layout = QVBoxLayout(self)
-        self._layout.setContentsMargins(20, 20, 20, 20)
+        self._layout.setContentsMargins(24, 24, 24, 24)
+        self._layout.setSpacing(16)
 
-        # Riot ID input row
+        # Page title
+        title = QLabel('Dashboard')
+        title.setFont(QFont('Segoe UI', 20, QFont.Weight.Bold))
+        self._layout.addWidget(title)
+
+        # Riot ID input row — labels above fields per form principles
         id_row = QHBoxLayout()
+        id_row.setSpacing(8)
+
+        name_col = QVBoxLayout()
+        name_col.setSpacing(4)
+        name_col.addWidget(QLabel('Game Name'))
         self._name_input = QLineEdit()
-        self._name_input.setPlaceholderText('Game Name')
+        self._name_input.setPlaceholderText('e.g. Faker')
+        name_col.addWidget(self._name_input)
+
+        tag_col = QVBoxLayout()
+        tag_col.setSpacing(4)
+        tag_col.addWidget(QLabel('Tag'))
         self._tag_input = QLineEdit()
-        self._tag_input.setPlaceholderText('TAG')
-        self._tag_input.setFixedWidth(80)
-        self._load_btn = QPushButton('Load')
+        self._tag_input.setPlaceholderText('NA1')
+        self._tag_input.setFixedWidth(88)
+        tag_col.addWidget(self._tag_input)
+
+        self._load_btn = QPushButton('Fetch Matches')
+        self._load_btn.setObjectName('cta_btn')
         self._load_btn.clicked.connect(self._on_load)
+        self._load_btn.setFixedHeight(40)
+        self._load_btn.setMinimumWidth(120)
+
         self._settings_btn = QPushButton('Settings')
         self._settings_btn.clicked.connect(self._open_settings)
-        id_row.addWidget(QLabel('Riot ID:'))
-        id_row.addWidget(self._name_input)
-        id_row.addWidget(QLabel('#'))
-        id_row.addWidget(self._tag_input)
-        id_row.addWidget(self._load_btn)
+        self._settings_btn.setFixedHeight(40)
+
+        id_row.addLayout(name_col)
+        id_row.addLayout(tag_col)
+        id_row.addWidget(self._load_btn, 0, Qt.AlignmentFlag.AlignBottom)
         id_row.addStretch()
-        id_row.addWidget(self._settings_btn)
+        id_row.addWidget(self._settings_btn, 0, Qt.AlignmentFlag.AlignBottom)
         self._layout.addLayout(id_row)
 
         self._status_label = QLabel('')
+        self._status_label.setStyleSheet(f'color: {TEXT_SEC}; font-size: {TYPE_SMALL}px;')
         self._layout.addWidget(self._status_label)
 
+        self._layout.addWidget(section_label('Stats Overview'))
         self._stats_grid = QGridLayout()
+        self._stats_grid.setSpacing(16)
         self._layout.addLayout(self._stats_grid)
         self._layout.addStretch()
 
@@ -181,7 +192,6 @@ class DashboardView(QWidget):
         avg_cs = round(sum(s['cs_per_min'] for s in all_stats) / len(all_stats), 1)
         top_champs = Counter(s['champion'] for s in all_stats).most_common(3)
 
-        # Clear old cards
         while self._stats_grid.count():
             item = self._stats_grid.takeAt(0)
             if item.widget():
@@ -199,4 +209,4 @@ class DashboardView(QWidget):
         self._stats_grid.addWidget(
             StatCard('Top Champions', top_champ_str), 1, 0, 1, 4)
 
-        self._status_label.setText(f'Showing stats for {len(all_stats)} matches.')
+        self._status_label.setText(f'{len(all_stats)} matches loaded.')
